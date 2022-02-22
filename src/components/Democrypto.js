@@ -1,7 +1,13 @@
-import React from 'react'
-import { createCipheriv, createDecipheriv } from 'crypto';
+import React, { useEffect } from 'react'
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
 export default function Democrypto() {
+
+    const generateKeyfile = () => {
+        const key = randomBytes(32);
+        const keyBuffer = Buffer.from(key);
+        console.log(keyBuffer);
+    }
 
     const handleFileToEncrypt = (e) => {
         e.preventDefault();
@@ -9,13 +15,19 @@ export default function Democrypto() {
         const uploadedFile = filesObject.files[0];
     }
 
-    const encrypt = (buffer) => {
+    const encrypt = (bfr) => {
         const cipher = createCipheriv(algorithm, key, iv);
-        const encrypted = Buffer.concat([cipher.update(buffer), cipher.final()]);
+        const encrypted = Buffer.concat([cipher.update(bfr), cipher.final()]);
     } 
+
+    useEffect(generateKeyfile, []);
 
     return (
         <div id="Democrypto" className="flex flex-col">
+            <div id="keyfile-gen">
+                <div id="keyfile-desc">Download your keyfile!</div>
+                <a id="keyfile-dl" href="" download>Download</a>
+            </div>
             <div id="encrypt-div">
                 <div id="encrypt-desc">Encrypt a pic!</div>
                 <form id="upload-file" onSubmit={handleFileToEncrypt}>
