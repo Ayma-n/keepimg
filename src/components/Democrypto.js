@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto-browserify';
 
 export default function Democrypto() {
 
     const generateKeyfile = () => {
         const key = randomBytes(32);
-        const keyBuffer = Buffer.from(key);
+        //const keyBuffer = Buffer.from(key);
         console.log(keyBuffer);
     }
 
@@ -17,7 +17,7 @@ export default function Democrypto() {
 
     const encrypt = (bfr) => {
         const cipher = createCipheriv(algorithm, key, iv);
-        const encrypted = Buffer.concat([cipher.update(bfr), cipher.final()]);
+        //const encrypted = Buffer.concat([cipher.update(bfr), cipher.final()]);
     } 
 
     useEffect(generateKeyfile, []);
