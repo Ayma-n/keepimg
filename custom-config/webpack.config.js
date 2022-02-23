@@ -311,7 +311,7 @@ module.exports = function (webpackEnv) {
       fallback: {
         crypto: require.resolve('crypto-browserify'),
         stream: require.resolve('stream-browserify'),
-        buffer: require.resolve('buffer/')
+        buffer: require.resolve('buffer')
       },
 
       modules: ['node_modules', paths.appNodeModules].concat(
@@ -795,6 +795,16 @@ module.exports = function (webpackEnv) {
           },
         },
       }),
+      
+      // Custom addition for KeepImg - work around for undefined Buffer
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+      }),
+
+      new webpack.ProvidePlugin({
+        process: 'process/browser'
+      }),
+
     ].filter(Boolean),
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
