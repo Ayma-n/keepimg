@@ -1,12 +1,18 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto-browserify';
+import { Buffer } from 'buffer';
 
 export default function Democrypto() {
 
+    const algorithm = 'aes-256-ctr';
+    let key;
+
+    const [keyBase64, setKeyBase64] = useState("");
+
     const generateKeyfile = () => {
-        const key = randomBytes(32);
-        //const keyBuffer = Buffer.from(key);
-        console.log(keyBuffer);
+        key = randomBytes(32);
+        const keyBuffer = Buffer.from(key);
+        setKeyBase64(keyBuffer.toString('base64'));
     }
 
     const handleFileToEncrypt = (e) => {
@@ -16,9 +22,9 @@ export default function Democrypto() {
     }
 
     const encrypt = (bfr) => {
-        const cipher = createCipheriv(algorithm, key, iv);
-        //const encrypted = Buffer.concat([cipher.update(bfr), cipher.final()]);
-    } 
+        const cipher = createCipheriv(algorithm, key, null);
+        const encrypted = Buffer.concat([cipher.update(bfr), cipher.final()]);
+    }
 
     useEffect(generateKeyfile, []);
 
@@ -26,7 +32,7 @@ export default function Democrypto() {
         <div id="Democrypto" className="flex flex-col">
             <div id="keyfile-gen">
                 <div id="keyfile-desc">Download your keyfile!</div>
-                <a id="keyfile-dl" href="" download>Download</a>
+                {keyBase64 && <a id="keyfile-dl" href={"data:application/octet-stream;base64," + keyBase64} className="w-100 h-100 rounded-md bg-green-500 text-white p-2 font-bold" download="your.key">Download</a>}
             </div>
             <div id="encrypt-div">
                 <div id="encrypt-desc">Encrypt a pic!</div>
