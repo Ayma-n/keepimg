@@ -29,9 +29,7 @@ export default function Democrypto() {
         const uploadedFile = filesObject.files[0];
         const uploadedFileBase64 = await toBase64(uploadedFile);
         const encryptedBase64 = encrypt(uploadedFileBase64);
-        console.log(encryptedBase64);
-        //const encryptedBufferLive = encrypt(uploadedBuffer);
-        //setEncryptedBuffer(encryptedBufferLive);
+        setEncryptedBuffer(encryptedBase64);
     }
 
     const encrypt = (bfr) => {
@@ -47,21 +45,6 @@ export default function Democrypto() {
         reader.onerror = error => reject(error);
     });
 
-
-    function getBase64(file) {
-        var reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            const uploadedBufferLive = Buffer.from(reader.result)
-            const encryptedBufferObtained = encrypt(uploadedBufferLive);
-            setEncryptedBuffer(encryptedBufferObtained);
-        };
-        reader.onerror = function (error) {
-            console.log('Error: ', error);
-        };
-    }
-
-
     useEffect(generateKeyfile, []);
 
     return (
@@ -76,7 +59,7 @@ export default function Democrypto() {
                     <input type="file" name="filename" id="file-id" />
                     <input type="submit" value="Upload" className="w-100 h-100 rounded-md bg-green-500 text-white p-2 font-bold" />
                 </form>
-                {encryptedBuffer && <a id="encrypted-dl" href={"data:application/octet-stream;base64," + encryptedBuffer} className="w-100 h-100 rounded-md bg-green-500 text-white p-2 font-bold" download="your.key">Download your encrypted file!</a>}
+                {encryptedBuffer && <a id="encrypted-dl" href={"data:application/octet-stream;base64," + encryptedBuffer} className="w-100 h-100 rounded-md bg-green-500 text-white p-2 font-bold" download="file.encrypted">Download your encrypted file!</a>}
             </div>
             <div id="decrypt-div">
                 <div id="decrypt-desc">Decrypt a pic!</div>
