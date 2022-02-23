@@ -6,25 +6,61 @@ export default function Democrypto() {
 
     const algorithm = 'aes-256-ctr';
     let key;
+    let iv;
 
+    const [keyState, setKeyState] = useState();
+    const [ivState, setIvState] = useState();
     const [keyBase64, setKeyBase64] = useState("");
+    const [uploadedBuffer, setUploadedBuffer] = useState();
+    const [encryptedBuffer, setEncryptedBuffer] = useState();
 
     const generateKeyfile = () => {
         key = randomBytes(32);
+        setKeyState(key);
+        iv = randomBytes(16);
+        setIvState(iv);
         const keyBuffer = Buffer.from(key);
         setKeyBase64(keyBuffer.toString('base64'));
     }
 
-    const handleFileToEncrypt = (e) => {
+    const handleFileToEncrypt = async (e) => {
         e.preventDefault();
         const filesObject = document.getElementById("file-id");
         const uploadedFile = filesObject.files[0];
+        const uploadedFileBase64 = await toBase64(uploadedFile);
+        const encryptedBase64 = encrypt(uploadedFileBase64);
+        console.log(encryptedBase64);
+        //const encryptedBufferLive = encrypt(uploadedBuffer);
+        //setEncryptedBuffer(encryptedBufferLive);
     }
 
     const encrypt = (bfr) => {
-        const cipher = createCipheriv(algorithm, key, null);
+        const cipher = createCipheriv("aes-256-ctr", keyState, ivState);
         const encrypted = Buffer.concat([cipher.update(bfr), cipher.final()]);
+        return encrypted.toString('base64');
     }
+
+    const toBase64 = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
+
+    function getBase64(file) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            const uploadedBufferLive = Buffer.from(reader.result)
+            const encryptedBufferObtained = encrypt(uploadedBufferLive);
+            setEncryptedBuffer(encryptedBufferObtained);
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
+    }
+
 
     useEffect(generateKeyfile, []);
 
@@ -40,6 +76,7 @@ export default function Democrypto() {
                     <input type="file" name="filename" id="file-id" />
                     <input type="submit" value="Upload" className="w-100 h-100 rounded-md bg-green-500 text-white p-2 font-bold" />
                 </form>
+                {encryptedBuffer && <a id="encrypted-dl" href={"data:application/octet-stream;base64," + encryptedBuffer} className="w-100 h-100 rounded-md bg-green-500 text-white p-2 font-bold" download="your.key">Download your encrypted file!</a>}
             </div>
             <div id="decrypt-div">
                 <div id="decrypt-desc">Decrypt a pic!</div>
